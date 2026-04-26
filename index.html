@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Millionaire Tracker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@400;500;600&display=swap');
+        
+        :root {
+            --gold: #ffd700;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: radial-gradient(circle at 50% 30%, #1a1a2e 0%, #0f0f1e 100%);
+            color: var(--gold);
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .dashboard {
+            width: 100%;
+            max-width: 1180px;
+            padding: 48px 52px;
+            background: rgba(15, 15, 30, 0.75);
+            backdrop-filter: blur(28px);
+            border-radius: 32px;
+            box-shadow: 
+                0 0 90px rgba(255, 215, 0, 0.45),
+                inset 0 0 70px rgba(255, 215, 0, 0.15);
+            border: 3px solid rgba(255, 215, 0, 0.6);
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.9rem;
+            text-align: center;
+            margin-bottom: 42px;
+            text-shadow: 
+                0 0 30px var(--gold),
+                0 0 60px var(--gold),
+                0 8px 0 rgba(0,0,0,0.3);
+            letter-spacing: -3px;
+            animation: titleGlow 4s infinite ease-in-out;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 42px;
+        }
+        
+        .card {
+            background: rgba(10, 10, 25, 0.65);
+            backdrop-filter: blur(24px);
+            border-radius: 24px;
+            padding: 36px 32px;
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 50px rgba(255, 215, 0, 0.25);
+        }
+        
+        .timer-card h2 {
+            text-align: center;
+            font-size: 1.35rem;
+            margin-bottom: 24px;
+            letter-spacing: 4px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        
+        .time-unit {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 18px;
+            padding: 18px 12px;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            transition: all 0.4s ease;
+        }
+        
+        .time-value {
+            font-size: 2.85rem;
+            font-weight: 600;
+            line-height: 1;
+            display: block;
+            margin-bottom: 6px;
+            text-shadow: 0 0 18px currentColor;
+        }
+        
+        .time-label {
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            opacity: 0.75;
+        }
+        
+        .finance-card h2 {
+            text-align: center;
+            font-size: 1.35rem;
+            margin-bottom: 24px;
+            letter-spacing: 4px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        .amount-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 2.5rem;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .current {
+            font-size: 3.1rem;
+            color: #00ffaa;
+            font-weight: 600;
+        }
+        
+        .target {
+            font-size: 2.1rem;
+            opacity: 0.75;
+        }
+        
+        .progress-container {
+            height: 32px;
+            background: #111;
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid var(--gold);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00ffaa, #ffd700);
+            transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            box-shadow: 0 0 25px #ffd700;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+            animation: shine 3.5s linear infinite;
+        }
+        
+        .percentage {
+            text-align: center;
+            font-size: 1.95rem;
+            margin-top: 14px;
+            font-weight: 600;
+            letter-spacing: -1px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 46px;
+            font-size: 0.95rem;
+            opacity: 0.65;
+            letter-spacing: 3px;
+            font-weight: 500;
+        }
+        
+        @keyframes titleGlow {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 20px var(--gold)); }
+            50% { filter: brightness(1.15) drop-shadow(0 0 45px var(--gold)); }
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-150%); }
+            100% { transform: translateX(400%); }
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.85;
+        }
+        
+        .micro {
+            font-size: 1.65rem;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div class="dashboard">
+        <h1>Is my husband millionaire yet?</h1>
+        
+        <div class="container">
+            <!-- Timer Card -->
+            <div class="card timer-card">
+                <h2>TIME REMAINING</h2>
+                <div class="countdown" id="countdown">
+                    <div class="time-unit">
+                        <span class="time-value" id="years">0</span>
+                        <span class="time-label">Years</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="months">0</span>
+                        <span class="time-label">Months</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="weeks">0</span>
+                        <span class="time-label">Weeks</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="days">0</span>
+                        <span class="time-label">Days</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="hours">0</span>
+                        <span class="time-label">Hours</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="minutes">0</span>
+                        <span class="time-label">Minutes</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="seconds">0</span>
+                        <span class="time-label">Seconds</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value micro" id="micros">000000</span>
+                        <span class="time-label">Microseconds</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Financial Card -->
+            <div class="card finance-card">
+                <h2>NET WORTH TRACKER</h2>
+                <div class="amount-display">
+                    <div>
+                        <div style="font-size:0.95rem; opacity:0.8;">CURRENT</div>
+                        <div class="current" id="current-amount">$0.00</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:0.95rem; opacity:0.8;">TARGET</div>
+                        <div class="target">$1,000,000</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-fill"></div>
+                </div>
+                
+                <div class="percentage" id="percentage">0%</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            1-YEAR GOAL • LIVE DASHBOARD
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION - UPDATE FINANCIAL AMOUNT HERE
+        let currentAmount = 0.00;
+        const TARGET = 1000000;
+        
+        const startDate = new Date();
+        const endDate = new Date(startDate);
+        endDate.setFullYear(endDate.getFullYear() + 1);
+        endDate.setHours(23, 59, 59, 999);
+        
+        const MS_PER_SECOND = 1000;
+        const MS_PER_MINUTE = MS_PER_SECOND * 60;
+        const MS_PER_HOUR = MS_PER_MINUTE * 60;
+        const MS_PER_DAY = MS_PER_HOUR * 24;
+        const MS_PER_WEEK = MS_PER_DAY * 7;
+        const MS_PER_MONTH = MS_PER_DAY * 30.436875;
+        const MS_PER_YEAR = MS_PER_DAY * 365.25;
+        
+        let initialDiff = endDate.getTime() - Date.now();
+        
+        const yearsEl = document.getElementById('years');
+        const monthsEl = document.getElementById('months');
+        const weeksEl = document.getElementById('weeks');
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        const microsEl = document.getElementById('micros');
+        const currentAmountEl = document.getElementById('current-amount');
+        const progressFill = document.getElementById('progress-fill');
+        const percentageEl = document.getElementById('percentage');
+        const countdownContainer = document.getElementById('countdown');
+        
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height * 0.6;
+                this.size = Math.random() * 14 + 7;
+                this.speedY = Math.random() * 1.8 + 0.6;
+                this.speedX = (Math.random() - 0.5) * 1.2;
+                this.opacity = Math.random() * 0.75 + 0.4;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 3.5;
+                this.hueShift = Math.random() * 30 - 15;
+            }
+            
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+                this.opacity -= 0.0025;
+                if (this.y > canvas.height || this.opacity <= 0) {
+                    this.y = -20;
+                    this.x = Math.random() * canvas.width;
+                    this.opacity = Math.random() * 0.75 + 0.4;
+                }
+            }
+            
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.shadowBlur = 22;
+                ctx.shadowColor = `hsl(48, 100%, 75%)`;
+                ctx.font = `${this.size}px Arial`;
+                ctx.fillStyle = '#ffd700';
+                ctx.fillText('$', -this.size/3, this.size/3);
+                ctx.restore();
+            }
+        }
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        function createParticles(count) {
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+        
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+        
+        function updateFinance() {
+            const progress = Math.min((currentAmount / TARGET) * 100, 100);
+            currentAmountEl.textContent = '$' + currentAmount.toLocaleString('en-US', { minimumFractionDigits: 2 });
+            progressFill.style.width = `${progress}%`;
+            percentageEl.textContent = `${Math.floor(progress)}%`;
+            
+            if (progress > 80) progressFill.style.background = 'linear-gradient(90deg, #00ffaa, #aaff00)';
+            else if (progress > 45) progressFill.style.background = 'linear-gradient(90deg, #ffd700, #ffcc00)';
+            else progressFill.style.background = 'linear-gradient(90deg, #ffaa00, #ff6600)';
+        }
+        
+        function updateCountdown() {
+            const now = Date.now();
+            let diff = endDate.getTime() - now;
+            
+            if (diff < 0) {
+                yearsEl.textContent = '0';
+                monthsEl.textContent = '0';
+                weeksEl.textContent = '0';
+                daysEl.textContent = '0';
+                hoursEl.textContent = '0';
+                minutesEl.textContent = '0';
+                secondsEl.textContent = '0';
+                microsEl.textContent = '000000';
+                countdownContainer.style.color = '#ff4444';
+                return;
+            }
+            
+            let years = Math.floor(diff / MS_PER_YEAR);
+            diff %= MS_PER_YEAR;
+            let months = Math.floor(diff / MS_PER_MONTH);
+            diff %= MS_PER_MONTH;
+            let weeks = Math.floor(diff / MS_PER_WEEK);
+            diff %= MS_PER_WEEK;
+            let days = Math.floor(diff / MS_PER_DAY);
+            diff %= MS_PER_DAY;
+            let hours = Math.floor(diff / MS_PER_HOUR);
+            diff %= MS_PER_HOUR;
+            let minutes = Math.floor(diff / MS_PER_MINUTE);
+            diff %= MS_PER_MINUTE;
+            let seconds = Math.floor(diff / MS_PER_SECOND);
+            let remainingMs = diff % MS_PER_SECOND;
+            let micros = Math.floor(remainingMs * 1000);
+            
+            yearsEl.textContent = String(years).padStart(1, '0');
+            monthsEl.textContent = String(months).padStart(2, '0');
+            weeksEl.textContent = String(weeks).padStart(2, '0');
+            daysEl.textContent = String(days).padStart(2, '0');
+            hoursEl.textContent = String(hours).padStart(2, '0');
+            minutesEl.textContent = String(minutes).padStart(2, '0');
+            secondsEl.textContent = String(seconds).padStart(2, '0');
+            microsEl.textContent = String(micros).padStart(6, '0');
+            
+            const timeLeftPercent = Math.max(0, Math.min(100, (diff / initialDiff) * 100));
+            
+            if (timeLeftPercent > 75) countdownContainer.style.color = '#00ffaa';
+            else if (timeLeftPercent > 45) countdownContainer.style.color = '#ffd700';
+            else if (timeLeftPercent > 20) countdownContainer.style.color = '#ffcc00';
+            else countdownContainer.style.color = '#ff6644';
+            
+            if (timeLeftPercent < 12) {
+                countdownContainer.style.transform = 'scale(1.035)';
+                setTimeout(() => countdownContainer.style.transform = 'scale(1)', 160);
+            }
+        }
+        
+        function startApp() {
+            updateFinance();
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            createParticles(82);
+            animateCanvas();
+            
+            let lastUpdate = 0;
+            function loop(timestamp) {
+                if (timestamp - lastUpdate > 7) {
+                    updateCountdown();
+                    lastUpdate = timestamp;
+                }
+                requestAnimationFrame(loop);
+            }
+            requestAnimationFrame(loop);
+            
+            setInterval(updateFinance, 1800);
+        }
+        
+        window.onload = startApp;
+    </script>
+</body>
+</html>
