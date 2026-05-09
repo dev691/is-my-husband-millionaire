@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -15,7 +14,6 @@
     <style>
         /* === SYSTEM VARIABLES & DESIGN TOKENS === */
         :root {
-            /* Palette */
             --bg-base: #030305;
             --surface: rgba(18, 18, 24, 0.65);
             --surface-border: rgba(255, 255, 255, 0.08);
@@ -25,18 +23,13 @@
             --text-dim: #9ca3af;
             --accent-cyan: #00e5ff;
             --accent-red: #ff2a5f;
-            
-            /* Typography */
             --font-display: 'Cinzel', serif;
             --font-sans: 'Inter', system-ui, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
-            
-            /* Animation */
             --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
             --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* === RESET & FOUNDATION === */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
@@ -52,14 +45,11 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Screen Reader Only Utility */
         .sr-only {
             position: absolute; width: 1px; height: 1px; padding: 0;
             margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;
         }
 
-        /* === OPTIMIZED BACKGROUNDS === */
-        /* Pre-rendered noise avoids heavy GPU calculation on every frame */
         .bg-noise {
             position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.4;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
@@ -73,7 +63,6 @@
             animation: breathe 15s ease-in-out infinite alternate;
         }
 
-        /* === BENTO ARCHITECTURE === */
         .dashboard {
             position: relative; z-index: 10;
             width: 100%; max-width: 1200px; padding: clamp(1rem, 3vw, 2rem);
@@ -94,13 +83,11 @@
         }
         .card:hover { border-color: rgba(212, 175, 55, 0.25); transform: translateY(-2px); }
 
-        /* Grid Spans */
         .node-header { grid-column: span 12; text-align: center; }
         .node-finance { grid-column: span 5; align-items: center; justify-content: center; }
         .node-timer { grid-column: span 7; }
         .node-chart { grid-column: span 12; height: 220px; padding: 1.5rem; }
 
-        /* === TYPOGRAPHY === */
         h1 {
             font-family: var(--font-display);
             font-size: clamp(2rem, 5vw, 4rem); font-weight: 800;
@@ -112,13 +99,12 @@
         .subtitle { font-size: 0.875rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.2em; font-weight: 500; }
         .card-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.15em; width: 100%; display: flex; justify-content: space-between; margin-bottom: 2rem; font-weight: 700; }
 
-        /* === FINANCE NODE === */
         .gauge { position: relative; width: 260px; height: 260px; display: flex; align-items: center; justify-content: center; }
         .gauge svg { transform: rotate(-90deg); width: 100%; height: 100%; position: absolute; inset: 0; }
         .gauge-track { fill: none; stroke: rgba(255, 255, 255, 0.05); stroke-width: 8; }
         .gauge-progress { 
             fill: none; stroke: var(--gold-primary); stroke-width: 8; stroke-linecap: round;
-            stroke-dasharray: 754; stroke-dashoffset: 754; /* 2 * PI * 120 */
+            stroke-dasharray: 754; stroke-dashoffset: 754;
             transition: stroke-dashoffset 2.5s var(--ease-spring);
             filter: drop-shadow(0 0 10px var(--gold-glow));
         }
@@ -127,7 +113,6 @@
         .finance-current { font-family: var(--font-mono); font-size: clamp(2rem, 3vw, 2.5rem); font-weight: 800; line-height: 1; }
         .finance-target { font-family: var(--font-mono); font-size: 0.9rem; color: var(--gold-primary); margin-top: 0.5rem; opacity: 0.8; }
 
-        /* === TEMPORAL NODE === */
         .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; width: 100%; }
         .time-box {
             background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.05);
@@ -147,20 +132,16 @@
         }
         .micro-box .time-val { color: var(--accent-red); font-size: clamp(2rem, 4vw, 3rem); text-shadow: 0 0 20px rgba(255, 42, 95, 0.4); }
 
-        /* === SPARKLINE NODE === */
         .chart-container { width: 100%; height: 100%; display: flex; align-items: flex-end; position: relative; }
         .chart-svg { width: 100%; height: 85%; overflow: visible; }
         .chart-line { fill: none; stroke: var(--gold-primary); stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 6px 8px rgba(212, 175, 55, 0.4)); }
         .chart-area { fill: url(#area-grad); }
 
-        /* === ANIMATIONS === */
         @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes breathe { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.05); opacity: 1; } }
 
-        /* === RESPONSIVE === */
         @media (max-width: 960px) {
             .node-finance, .node-timer { grid-column: span 12; }
-            .time-grid { grid-template-columns: repeat(4, 1fr); }
         }
         @media (max-width: 500px) {
             .time-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
@@ -172,19 +153,16 @@
 </head>
 <body>
 
-    <!-- Environment Elements -->
     <div class="bg-mesh" aria-hidden="true"></div>
     <div class="bg-noise" aria-hidden="true"></div>
 
     <main class="dashboard">
         
-        <!-- Header -->
         <header class="card node-header">
             <h1>Is my husband millionaire yet?</h1>
             <p class="subtitle">Strategic 1-Year Liquidity Horizon</p>
         </header>
 
-        <!-- Finance Core -->
         <section class="card node-finance" aria-labelledby="finance-heading">
             <h2 id="finance-heading" class="sr-only">Financial Progress</h2>
             <div class="card-label">
@@ -198,13 +176,12 @@
                     <circle class="gauge-progress" id="ui-ring" cx="130" cy="130" r="120"></circle>
                 </svg>
                 <div class="finance-data">
-                    <div class="finance-current" id="ui-current">$2.00</div>
+                    <div class="finance-current" id="ui-current">$6.00</div>
                     <div class="finance-target">TGT: $1,000,000.00</div>
                 </div>
             </div>
         </section>
 
-        <!-- Temporal Core -->
         <section class="card node-timer" aria-labelledby="timer-heading">
             <h2 id="timer-heading" class="sr-only">Time Remaining</h2>
             <div class="card-label">
@@ -229,7 +206,6 @@
             </div>
         </section>
 
-        <!-- Data Visualization Core -->
         <section class="card node-chart" aria-hidden="true">
             <div class="card-label"><span>Projected Trajectory (Bezier Interpolation)</span></div>
             <div class="chart-container">
@@ -254,14 +230,13 @@
         /**
          * =======================================================================
          * SYSTEM CONFIGURATION
-         * Update `currentAmount` to drive the Financial & Chart UI.
+         * Only update `currentAmount` — everything else derives from it.
          * =======================================================================
          */
         const CONFIG = {
-            targetAmount: 1000000.00,
-            currentAmount: 0.00,       // <-- UPDATE THIS VALUE
-            
-            // Fixed temporal anchor (Dynamic to the day code is first run)
+            targetAmount:  1000000.00,
+            currentAmount: 6.00,        // <-- THE ONLY VALUE YOU EVER NEED TO CHANGE
+
             start: new Date(),
             getEnd: function() {
                 const d = new Date(this.start);
@@ -279,19 +254,15 @@
         };
         STATE.totalDur = STATE.end - STATE.start;
 
-        /**
-         * =======================================================================
-         * DOM MANAGEMENT
-         * =======================================================================
-         */
+        /* === DOM REFERENCES === */
         const DOM = {
-            ring: document.getElementById('ui-ring'),
-            curr: document.getElementById('ui-current'),
-            perc: document.getElementById('ui-percent'),
-            line: document.getElementById('ui-line'),
-            area: document.getElementById('ui-area'),
+            ring:   document.getElementById('ui-ring'),
+            curr:   document.getElementById('ui-current'),
+            perc:   document.getElementById('ui-percent'),
+            line:   document.getElementById('ui-line'),
+            area:   document.getElementById('ui-area'),
             status: document.getElementById('ui-status'),
-            root: document.documentElement,
+            root:   document.documentElement,
             t: {
                 yr: document.getElementById('t-yr'), mo: document.getElementById('t-mo'),
                 wk: document.getElementById('t-wk'), dy: document.getElementById('t-dy'),
@@ -303,82 +274,60 @@
         const fmtCash = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
         const pad = (n, l = 2) => String(n).padStart(l, '0');
 
-        /**
-         * =======================================================================
-         * FINANCIAL & CHART ENGINE
-         * =======================================================================
-         */
+        /* === FINANCIAL ENGINE === */
         const initFinance = () => {
             const { currentAmount, targetAmount } = CONFIG;
             DOM.curr.textContent = fmtCash(currentAmount);
-            
-            let percent = Math.min((currentAmount / targetAmount) * 100, 100);
-            DOM.perc.textContent = percent.toFixed(2) + '%';
 
-            // SVG Radial Gauge Math (Radius: 120, Circumference: ~753.98)
-            const circ = 2 * Math.PI * 120;
+            const percent = Math.min((currentAmount / targetAmount) * 100, 100);
+            DOM.perc.textContent = percent.toFixed(4) + '%';   // 4 decimals to show tiny progress
+
+            const circ   = 2 * Math.PI * 120;                 // ~753.98
             const offset = circ - (percent / 100) * circ;
-            
-            // Allow layout to paint before triggering CSS transition
+
             requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    DOM.ring.style.strokeDashoffset = offset;
-                });
+                requestAnimationFrame(() => { DOM.ring.style.strokeDashoffset = offset; });
             });
 
             drawSmoothSparkline(percent);
         };
 
-        // Advanced Cubic Bezier Smoothing Algorithm for Sparkline
         const drawSmoothSparkline = (percent) => {
-            const pts = [];
-            const segments = 12; // Fewer segments = smoother curves
-            const targetY = 90 - (percent / 100 * 80); // Map % to SVG Y-axis (10-90)
-            
-            let currY = 90;
-            pts.push({x: 0, y: 90});
+            const pts     = [];
+            const segments = 12;
+            const targetY  = 90 - (percent / 100 * 80);
 
-            for(let i = 1; i <= segments; i++) {
-                const x = (i / segments) * 1000;
+            let currY = 90;
+            pts.push({ x: 0, y: 90 });
+
+            for (let i = 1; i <= segments; i++) {
+                const x        = (i / segments) * 1000;
                 const progress = i / segments;
-                // Add organic noise that diminishes as it reaches the current actual data point
-                const noise = (Math.sin(i * 1.5) * 12) * (1 - progress);
-                const y = currY - ((currY - targetY) * progress) + noise;
-                
-                pts.push({x, y: Math.max(10, Math.min(90, y))});
+                const noise    = (Math.sin(i * 1.5) * 12) * (1 - progress);
+                const y        = currY - ((currY - targetY) * progress) + noise;
+                pts.push({ x, y: Math.max(10, Math.min(90, y)) });
                 currY = y;
             }
 
-            // Construct bezier curve path
             let path = `M ${pts[0].x},${pts[0].y}`;
             for (let i = 0; i < pts.length - 1; i++) {
-                const p0 = pts[i];
-                const p1 = pts[i + 1];
-                // Control points for smooth easing
-                const cp1x = p0.x + (p1.x - p0.x) / 2;
-                const cp2x = p0.x + (p1.x - p0.x) / 2;
-                path += ` C ${cp1x},${p0.y} ${cp2x},${p1.y} ${p1.x},${p1.y}`;
+                const p0  = pts[i], p1 = pts[i + 1];
+                const cpx = p0.x + (p1.x - p0.x) / 2;
+                path += ` C ${cpx},${p0.y} ${cpx},${p1.y} ${p1.x},${p1.y}`;
             }
 
             DOM.line.setAttribute('d', path);
             DOM.area.setAttribute('d', `${path} L 1000,100 L 0,100 Z`);
         };
 
-        /**
-         * =======================================================================
-         * HIGH-RESOLUTION TEMPORAL ENGINE
-         * Uses performance.now() combined with Date.now() for true microseconds
-         * =======================================================================
-         */
+        /* === HIGH-RESOLUTION TIMER === */
         const T = { MS: 1, SEC: 1000, MIN: 60000, HR: 3600000, DAY: 86400000, WK: 604800000, MO: 2629746000, YR: 31557600000 };
 
         const updateTime = (highResTimestamp) => {
-            // Establish baseline delta on first frame
             if (!STATE.highResOffset) STATE.highResOffset = Date.now() - highResTimestamp;
-            
-            // Calculate exact current time with sub-millisecond precision
+
             const exactNow = STATE.highResOffset + highResTimestamp;
-            const diff = STATE.end - exactNow;
+            const diff     = STATE.end - exactNow;
 
             if (diff <= 0) {
                 DOM.status.textContent = "DEADLINE COMPLETED";
@@ -386,27 +335,22 @@
                 return;
             }
 
-            // Dynamic Urgency
             const pctLeft = (diff / STATE.totalDur) * 100;
-            if (pctLeft < 10) DOM.root.style.setProperty('--accent-cyan', '#ff2a5f');
+            if      (pctLeft < 10) DOM.root.style.setProperty('--accent-cyan', '#ff2a5f');
             else if (pctLeft < 30) DOM.root.style.setProperty('--accent-cyan', '#d4af37');
 
             let rem = diff;
-            const y = Math.floor(rem / T.YR); rem %= T.YR;
-            const m = Math.floor(rem / T.MO); rem %= T.MO;
-            const w = Math.floor(rem / T.WK); rem %= T.WK;
-            const d = Math.floor(rem / T.DAY); rem %= T.DAY;
-            const h = Math.floor(rem / T.HR); rem %= T.HR;
+            const y  = Math.floor(rem / T.YR);  rem %= T.YR;
+            const mo = Math.floor(rem / T.MO);  rem %= T.MO;
+            const w  = Math.floor(rem / T.WK);  rem %= T.WK;
+            const d  = Math.floor(rem / T.DAY); rem %= T.DAY;
+            const h  = Math.floor(rem / T.HR);  rem %= T.HR;
             const mn = Math.floor(rem / T.MIN); rem %= T.MIN;
-            const s = Math.floor(rem / T.SEC); rem %= T.SEC;
-            
-            // Extract decimal portion of milliseconds to calculate true microseconds
-            const exactMs = rem % 1000;
-            const micro = Math.floor(exactMs * 1000);
+            const s  = Math.floor(rem / T.SEC); rem %= T.SEC;
+            const micro = Math.floor((rem % 1000) * 1000);
 
-            // Batch UI updates
             DOM.t.yr.textContent = y;
-            DOM.t.mo.textContent = pad(m);
+            DOM.t.mo.textContent = pad(mo);
             DOM.t.wk.textContent = pad(w);
             DOM.t.dy.textContent = pad(d);
             DOM.t.hr.textContent = pad(h);
@@ -417,7 +361,7 @@
             requestAnimationFrame(updateTime);
         };
 
-        // System Initialization
+        /* === BOOT === */
         document.addEventListener('DOMContentLoaded', () => {
             initFinance();
             requestAnimationFrame(updateTime);
@@ -425,4 +369,3 @@
     </script>
 </body>
 </html>
-
